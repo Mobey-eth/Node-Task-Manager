@@ -1,6 +1,9 @@
+require("./db/connect");
 const express = require("express"); // initialise express
 const app = express(); // invoke (call) express
 const tasks = require("./routes/tasks");
+const connectDB = require("./db/connect");
+require("dotenv").config();
 
 // middleware
 app.use(express.json()); // express middleware to use JSON
@@ -13,7 +16,17 @@ app.get("/hello", (req, res) => {
 
 app.use("/api/v1/tasks", tasks);
 
-app.listen(port, console.log(`Server is listeninig on port ${port}`));
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+
+    app.listen(port, console.log(`Server is listeninig on port ${port}`));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();
 
 /**
  * I need to Implement a couple of routes for this project
@@ -24,6 +37,9 @@ app.listen(port, console.log(`Server is listeninig on port ${port}`));
  * app.patch("/api/v1/tasks/:id", (req, res) =>{}) -
  * app.delete("/api/v1/tasks/:id", (req, res) =>{}) -
  *
+ *
+ *
+ * app.listen(port, console.log(`Server is listeninig on port ${port}`));
  */
 
-// 38 mins
+// 1 hr : 10 mins
