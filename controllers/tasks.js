@@ -1,10 +1,21 @@
+const Task = require("../models/Task"); // import our Tasks model
+
 const getAllTasks = (req, res) => {
   res.send("Get All Tasks");
 };
 
-const createTask = (req, res) => {
-  console.log(req.body); // This will log out the data we want to post to the database
-  res.json(req.body);
+const createTask = async (req, res) => {
+  try {
+    console.log(req.body); // This will log out the data we want to post to the database
+    // const task = await Task.create({name: "Wash clothes", completed: false})
+
+    const task = await Task.create(req.body); // the variable name is the header for my response json
+
+    res.status(201).json({ task });
+  } catch (err) {
+    res.status(400);
+    res.send(err.message);
+  }
 };
 
 const getTask = (req, res) => {
