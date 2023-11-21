@@ -13,8 +13,11 @@ const createTask = async (req, res) => {
 
     res.status(201).json({ task });
   } catch (err) {
-    res.status(400);
-    res.send(err.message);
+    res.status(500).send(err.message);
+    // res.send(err.message);
+
+    //ninja way
+    // res.status(500).json({ msg: err });
   }
 };
 
