@@ -1,7 +1,12 @@
 const Task = require("../models/Task"); // import our Tasks model
 
-const getAllTasks = (req, res) => {
-  res.send("Get All Tasks");
+const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(201).json({ tasks });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
 const createTask = async (req, res) => {
@@ -21,21 +26,54 @@ const createTask = async (req, res) => {
   }
 };
 
-const getTask = (req, res) => {
-  //res.send("Get single Task");
-  res.json({ id: req.params.id }); // parses the task id into json as a response object
+const getTask = async (req, res) => {
+  // res.json({ id: req.params.id }); // parses the task id into json as a response object
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOne({ _id: taskID });
+
+    if (!task) {
+      return res.status(404).json({ msg: `Task at ${taskID} not found` });
+    }
+
+    res.status(201).json({ task });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
-const updateTask = (req, res) => {
-  // res.send("Update Task");
-  res.json(req.body);
+const deleteTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndDelete({ _id: taskID });
+
+    if (!task) {
+      return res.status(404).json({ msg: `Task at ${taskID} not found` });
+    }
+
+    res.status(201).json({ msg: `task deleted at ${taskID}`, task: task });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
-const deleteTask = (req, res) => {
-  const taskId = req.params.id;
-  console.log(taskId);
-  // res.json({ "Deleted Task at": req.params.id });
-  res.send(`task deleted at ${taskId}`);
+const updateTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+
+    // we will keep getting the old values unless we start using the options value
+    const task = await Task.findByIdAndUpdate({ _id: taskID }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!task) {
+      return res.status(404).json({ msg: `Task at ${taskID} not found` });
+    }
+
+    res.status(201).json({ task });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };
 
 module.exports = {
@@ -45,3 +83,18 @@ module.exports = {
   updateTask,
   deleteTask,
 };
+
+/**
+ * Mobi method lol...
+ const getTask = async (req, res) => {
+  // res.json({ id: req.params.id }); // parses the task id into json as a response object
+  try {
+    console.log(req.params.id);
+    const singleTask = await Task.findOne({ _id: req.params.id });
+    res.status(201).json({ singleTask });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+ */
