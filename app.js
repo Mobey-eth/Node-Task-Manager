@@ -6,13 +6,17 @@ const connectDB = require("./db/connect");
 require("dotenv").config();
 
 // middleware
+
+// To use static file we need to set up another middleware
+app.use(express.static("./public"));
+
 app.use(express.json()); // express middleware to use JSON
 
 const port = 3000; // default port number
 
-app.get("/hello", (req, res) => {
-  res.send("Welcome to Task manager app!");
-});
+// app.get("/hello", (req, res) => {
+//   res.send("Welcome to Task manager app!");
+// });
 
 app.use("/api/v1/tasks", tasks);
 
