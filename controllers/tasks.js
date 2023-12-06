@@ -1,4 +1,6 @@
 const Task = require("../models/Task"); // import our Tasks model
+//  Import the asycn wrapper to reduce the try catch
+const asyncWrapper = require("../middleware/async");
 
 const getAllTasks = async (req, res) => {
   try {
